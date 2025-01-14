@@ -1,6 +1,6 @@
 # /api/v1/auth/auth_routes.py
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Header
 from api.v1.auth.models import UserRegistrationRequest
 from api.v1.services.mongo import MongoDB
 from api.v1.config import CONFIG
@@ -61,5 +61,25 @@ async def login_user(request: UserRegistrationRequest): # Reuse the same request
     
     except HTTPException as http_exc:
         raise http_exc  # Re-raise HTTP exceptions
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+@auth_router.get("/check_login")
+async def check_login_status(authorization: str = Header(None)):
+    if authorization is None:
+        raise HTTPException(status_code=401, detail="Authorization token is missing.")
+    
+    # Extract the token from "Bearer <token>"
+    token_prefix = "Bearer "
+    if not authorization.startswith(token_prefix):
+        raise HTTPException(status_code=401, detail="Invalid authorization code.")
+    
+    token = authorization[len(token_prefix):]  # Get the actual token
+
+    try:
+        current_user = AuthSecurity.get_current_user(token)  # Validate and decode the token
+        return {"message": "Token is valid", "user": current_user}  # Return user info if valid
+    except HTTPException as e:
+        raise e  # Re-raise HTTP exceptions
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")

@@ -1,3 +1,6 @@
+[tool.poetry]
+package-mode = false  # Disable package mode for Poetry (used only for dependency management)
+
 [project]
 name = "mfb-webapp-backend"
 version = "0.1.0"
@@ -5,6 +8,7 @@ description = ""
 authors = [
     {name = "teleporterx"}
 ]
+
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
