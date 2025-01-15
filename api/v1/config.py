@@ -1,9 +1,12 @@
 # /api/v1/config.py
 
 import os
-from dotenv import load_dotenv
+# deprecated due to containerization
+# from dotenv import load_dotenv
 
-load_dotenv()  # Load environment variables from .env file
+# load_dotenv()  # Load environment variables from .env file
+
+## values are now passed from docker-compose
 
 CONFIG = {
     'MONGO_URL': os.getenv('MONGO_URL'),

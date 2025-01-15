@@ -38,6 +38,14 @@ async def get_fund_families(
         # Extract and filter fund families from all schemes
         # fund_families = list(set(scheme["Mutual_Fund_Family"] for scheme in all_open_ended_schemes))
         
+        # Dev for API savings
+        # await mongo_service.insert_one(
+        #     "mfb_webapp",
+        #     "fund_families",
+        #     {"$set": {"fund_families": fund_families}},
+        #     upsert=True
+        # )
+
         # Dev for UI
         fund_families = {
             "Aditya Birla Sun Life Mutual Fund",
@@ -82,7 +90,35 @@ async def get_open_ended_latest_schemes(
         # Fetch data from RapidAPI
         all_schemes = await RapidAPIService.fetch_latest_ff_open_ended_schemes(request.fund_family)
 
-        return all_schemes
+        # Dev for UI
+        return {
+            "status": "success",
+            "data": [
+                {
+                    "Scheme_Code": 119551,
+                    "ISIN_Div_Payout_ISIN_Growth": "INF209KA12Z1",
+                    "ISIN_Div_Reinvestment": "INF209KA13Z9",
+                    "Scheme_Name": "Aditya Birla Sun Life Banking & PSU Debt Fund  - DIRECT - IDCW",
+                    "Net_Asset_Value": 102.5067,
+                    "Date": "14-Jan-2025",
+                    "Scheme_Type": "Open Ended Schemes",
+                    "Scheme_Category": "Debt Scheme - Banking and PSU Fund",
+                    "Mutual_Fund_Family": "Aditya Birla Sun Life Mutual Fund"
+                },
+                {
+                    "Scheme_Code": 119552,
+                    "ISIN_Div_Payout_ISIN_Growth": "INF209K01YM2",
+                    "ISIN_Div_Reinvestment": "-",
+                    "Scheme_Name": "Aditya Birla Sun Life Banking & PSU Debt Fund  - DIRECT - MONTHLY IDCW",
+                    "Net_Asset_Value": 115.5344,
+                    "Date": "14-Jan-2025",
+                    "Scheme_Type": "Open Ended Schemes",
+                    "Scheme_Category": "Debt Scheme - Banking and PSU Fund",
+                    "Mutual_Fund_Family": "Aditya Birla Sun Life Mutual Fund"
+                }
+                ]
+            }
+        return {"status": "success", "data": all_schemes}
     
     except HTTPException as e:
         raise e  # Re-raise HTTP exceptions
