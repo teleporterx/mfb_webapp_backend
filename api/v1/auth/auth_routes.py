@@ -8,12 +8,14 @@ from api.v1.auth.auth_security import AuthSecurity
 
 auth_router = APIRouter()
 mongo_service = MongoDB(CONFIG['MONGO_URL'])
+db_name = "mfb_webapp"  # Same database used in auth
+collection_name = "user_data"  # Collection for purchase data
 
 @auth_router.post("/register")
 async def register_user(request: UserRegistrationRequest):
     try:
         # Check if the email is already registered
-        existing_user = await mongo_service.find_one("mfb_webapp", "user_data", {"email": request.email})
+        existing_user = await mongo_service.find_one(db_name, collection_name, {"email": request.email})
         if existing_user:
             raise HTTPException(status_code=400, detail="Email already registered")
         
