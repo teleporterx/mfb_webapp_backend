@@ -13,7 +13,7 @@ async def get_fund_families(
     authorization: str = Header(None)
     ):
     """
-    Fetch latest open ended schemes for the selected fund family using the /latest endpoint.
+    Fetch all open ended schemes and filter all families using the /latest endpoint.
     """
     if authorization is None:
         raise HTTPException(status_code=401, detail="Authorization token is missing.")
@@ -58,8 +58,7 @@ async def get_open_ended_latest_schemes(
     authorization: str = Header(None)
 ):
     """
-    Fetch latest schemes for the selected fund family using the /latest endpoint.
-    Filter all the fund families by the selected fund family.
+    Filter out selected fund family and associated details.
     """
     if authorization is None:
         raise HTTPException(status_code=401, detail="Authorization token is missing.")
