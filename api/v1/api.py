@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 from api.v1.auth.auth_routes import auth_router
-from api.v1.fund_families.fund_families_routes import router as ff_router
+from api.v1.funds.fund_routes import router as ff_router
 
 api_router = APIRouter()
 
