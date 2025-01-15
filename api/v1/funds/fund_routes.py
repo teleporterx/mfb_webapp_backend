@@ -13,8 +13,7 @@ async def get_fund_families(
     authorization: str = Header(None)
     ):
     """
-    Fetch latest schemes for the selected fund family using the /latest endpoint.
-    Filter all the fund families by the selected fund family.
+    Fetch latest open ended schemes for the selected fund family using the /latest endpoint.
     """
     if authorization is None:
         raise HTTPException(status_code=401, detail="Authorization token is missing.")
@@ -32,8 +31,18 @@ async def get_fund_families(
         all_open_ended_schemes = await RapidAPIService.fetch_latest_open_ended_schemes()
 
         # Extract and filter fund families from all schemes
-        fund_families = list(set(scheme["Mutual_Fund_Family"] for scheme in all_open_ended_schemes))
-
+        # fund_families = list(set(scheme["Mutual_Fund_Family"] for scheme in all_open_ended_schemes))
+        
+        # Dev for UI
+        fund_families = {
+            "Aditya Birla Sun Life Mutual Fund",
+            "Axis Mutual Fund",
+            "HDFC",
+            "ICICI",
+            "SBI",
+            "Union",
+            "Canara"}  # Example fund family houses
+        
         if not fund_families:
             raise HTTPException(status_code=404, detail="No fund families found!")
 
@@ -43,13 +52,14 @@ async def get_fund_families(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
-@router.get("/fund_schemes/latest/open_ended")
+@router.post("/fund_schemes/latest/open_ended")
 async def get_open_ended_latest_schemes(
     request: FundFamilyRequest,
     authorization: str = Header(None)
 ):
     """
     Fetch latest schemes for the selected fund family using the /latest endpoint.
+    Filter all the fund families by the selected fund family.
     """
     if authorization is None:
         raise HTTPException(status_code=401, detail="Authorization token is missing.")
@@ -66,20 +76,10 @@ async def get_open_ended_latest_schemes(
         current_user = AuthSecurity.get_current_user(token)
 
         # Fetch data from RapidAPI
-        all_schemes = await RapidAPIService.fetch_latest_open_ended_schemes()
+        all_schemes = await RapidAPIService.fetch_latest_ff_open_ended_schemes(request.fund_family)
 
-        # Filter open-ended schemes for the specific fund family
-        ff_open_ended_schemes = [
-            scheme for scheme in all_schemes
-            if scheme.get("Mutual_Fund_Family") == request.fund_family
-            # if scheme.get("Scheme_Type") == "Open Ended Schemes"
-            # and scheme.get("Mutual_Fund_Family") == request.fund_family
-        ]
-
-        if not ff_open_ended_schemes:
-            raise HTTPException(status_code=404, detail="No open-ended schemes found for the given fund family.")
-
-        return {"status": "success", "data": ff_open_ended_schemes}
+        return all_schemes
+    
     except HTTPException as e:
         raise e  # Re-raise HTTP exceptions
     except Exception as e:
