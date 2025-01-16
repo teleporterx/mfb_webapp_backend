@@ -18,7 +18,7 @@ class RapidAPIService:
         }
 
         # Dev for UI
-        return ""
+        # return ""
 
         async with httpx.AsyncClient() as client:
             response = await client.get(url, headers=headers)

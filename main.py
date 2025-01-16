@@ -1,5 +1,3 @@
-# /main.py
-
 import logging
 from fastapi import FastAPI
 # FUT: Enable while using with UI
@@ -13,19 +11,13 @@ logger = logging.getLogger(__name__)
 # FastAPI setup
 app = FastAPI()
 
-
-# Origins that are allowed to make requests
-origins = [
-    "http://localhost:5000", # mfb_webapp_frontend
-]
-
-# FUT: Enable while using with UI
+# Allow all origins to make requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # Allow any origin
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
 )
 
 @app.get("/")

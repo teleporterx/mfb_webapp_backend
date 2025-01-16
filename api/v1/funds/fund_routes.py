@@ -1,17 +1,28 @@
 # api/v1/fund_families/fund_families_routes.py
 
-from fastapi import APIRouter, HTTPException, Header, Depends
+from fastapi import APIRouter, HTTPException, Header
+from fastapi.responses import JSONResponse
 from api.v1.auth.auth_security import AuthSecurity
 from api.v1.funds.models import FundFamilyRequest, BuyRequest
 from api.v1.services.rapidapi_mutfund import RapidAPIService
 from api.v1.services.mongo import MongoDB
 from api.v1.config import CONFIG
 from datetime import datetime, timezone
+import os
+import json
 
 router = APIRouter()
 mongo_service = MongoDB(CONFIG['MONGO_URL'])
 db_name = "mfb_webapp"  # Same database used in auth
 collection_name = "purchases"  # Collection for purchase data
+
+# For API Savings (Direct File cache instead of using Redis)
+# Load fund families from the specific JSON file in the "funds" directory
+FUND_FAMILIES_JSON_PATH = os.path.join(os.path.dirname(__file__), "fund_families.json")
+
+# Read the fund families from the JSON file
+with open(FUND_FAMILIES_JSON_PATH, "r") as f:
+    fund_families_data = json.load(f)
 
 @router.get("/fund_families")
 async def get_fund_families(
@@ -32,34 +43,34 @@ async def get_fund_families(
 
     try:
         current_user = AuthSecurity.get_current_user(token)
+
+        # Return the fund families directly from the JSON file
+        return JSONResponse(
+            status_code=200,
+            content={"status": "success", "fund_families": fund_families_data["fund_families"]}
+        )
+
         # Fetch data from RapidAPI
-        all_open_ended_schemes = await RapidAPIService.fetch_latest_open_ended_schemes()
+        # all_open_ended_schemes = await RapidAPIService.fetch_latest_open_ended_schemes()
 
         # Extract and filter fund families from all schemes
         # fund_families = list(set(scheme["Mutual_Fund_Family"] for scheme in all_open_ended_schemes))
-        
-        # Dev for API savings
-        # await mongo_service.insert_one(
-        #     "mfb_webapp",
-        #     "fund_families",
-        #     {"$set": {"fund_families": fund_families}},
-        #     upsert=True
-        # )
 
         # Dev for UI
-        fund_families = {
-            "Aditya Birla Sun Life Mutual Fund",
-            "Axis Mutual Fund",
-            "HDFC",
-            "ICICI",
-            "SBI",
-            "Union",
-            "Canara"}  # Example fund family houses
+        # fund_families = {
+        #     "Aditya Birla Sun Life Mutual Fund",
+        #     "Axis Mutual Fund",
+        #     "HDFC",
+        #     "ICICI",
+        #     "SBI",
+        #     "Union",
+        #     "Canara"}  # Example fund family houses
         
         if not fund_families:
             raise HTTPException(status_code=404, detail="No fund families found!")
 
         return {"status": "success", "fund_families": fund_families}
+    
     except HTTPException as e:
         raise e
     except Exception as e:
