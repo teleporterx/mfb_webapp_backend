@@ -167,6 +167,7 @@ async def buy_fund(
         scheme_name = request.Scheme_Name
         date = request.Date
         scheme_category = request.Scheme_Category
+        mutual_fund_family = request.Mutual_Fund_Family
         units = request.units
         nav = request.nav
         isig = request.ISIN_Div_Payout_ISIN_Growth 
@@ -211,6 +212,7 @@ async def buy_fund(
                 "Scheme_Name": scheme_name,
                 "Date": date,
                 "Scheme_Category": scheme_category,
+                "Mutual_Fund_Family": mutual_fund_family,
                 "units": units,
                 "Net_Asset_Value": nav,
                 "ISIN_Div_Payout_ISIN_Growth": isig,

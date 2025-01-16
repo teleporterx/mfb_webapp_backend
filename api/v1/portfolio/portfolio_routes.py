@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from api.v1.auth.auth_security import AuthSecurity
 from api.v1.services.mongo import MongoDB
 from api.v1.config import CONFIG
+from api.v1.services.rapidapi_mutfund import RapidAPIService
 
 router = APIRouter()
 mongo_service = MongoDB(CONFIG['MONGO_URL'])
@@ -74,3 +75,5 @@ async def get_portfolio(authorization: str = Header(None)):
         raise e  # Re-raise HTTP exceptions
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+# @router.post()

@@ -9,6 +9,7 @@ class BuyRequest(BaseModel):
     Scheme_Name: str
     Date: str
     Scheme_Category: str
+    Mutual_Fund_Family: str
     units: int
     nav: float
     ISIN_Div_Payout_ISIN_Growth: str
