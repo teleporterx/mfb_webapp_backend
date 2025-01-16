@@ -1,8 +1,10 @@
 import logging
+import asyncio
 from fastapi import FastAPI
 # FUT: Enable while using with UI
 from fastapi.middleware.cors import CORSMiddleware
 from api.v1.api import api_router
+from api.v1.portfolio.portfolio_routes import run_hourly_updates
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -36,3 +38,11 @@ ascii_art = """
 ╰━━━╯╱╱╰╯╱╰┻━━╯╱╰╯╱╰━━━╯
 """
 print(ascii_art)
+
+@app.on_event("startup")
+async def startup_event():
+    """
+    Startup event to run the hourly updates in the background.
+    """
+    logger.info("Starting hourly updates...")
+    asyncio.create_task(run_hourly_updates())
