@@ -164,8 +164,13 @@ async def buy_fund(
         current_user = AuthSecurity.get_current_user(token)
         user_email = current_user["email"]  # Use email as the unique identifier
         scheme_code = request.Scheme_Code
+        scheme_name = request.Scheme_Name
+        date = request.Date
+        scheme_category = request.Scheme_Category
         units = request.units
         nav = request.nav
+        isig = request.ISIN_Div_Payout_ISIN_Growth 
+        isir = request.ISIN_Div_Reinvestment
 
         if units <= 0:
             raise HTTPException(status_code=400, detail="Units must be greater than 0.")
@@ -203,8 +208,13 @@ async def buy_fund(
             new_purchase = {
                 "email": user_email,
                 "Scheme_Code": scheme_code,
+                "Scheme_Name": scheme_name,
+                "Date": date,
+                "Scheme_Category": scheme_category,
                 "units": units,
                 "Net_Asset_Value": nav,
+                "ISIN_Div_Payout_ISIN_Growth": isig,
+                "ISIN_Div_Reinvestment": isir,
                 "total_cost": total_cost,
                 "purchase_date": datetime.now(timezone.utc)
             }

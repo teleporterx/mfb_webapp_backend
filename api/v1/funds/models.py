@@ -6,5 +6,10 @@ class FundFamilyRequest(BaseModel):
 
 class BuyRequest(BaseModel):
     Scheme_Code: int
+    Scheme_Name: str
+    Date: str
+    Scheme_Category: str
     units: int
     nav: float
+    ISIN_Div_Payout_ISIN_Growth: str
+    ISIN_Div_Reinvestment: str
